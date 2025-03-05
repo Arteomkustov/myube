@@ -6,4 +6,4 @@
 ![image](https://github.com/user-attachments/assets/e1cc1a7d-18b8-470b-8a7d-54a1a1bf996c)
 # !!! Python должен быть версии 3.10. Перейдите в терминале в C:\myube\myube и введите python -m venv venv, затем venv\Scripts\activate.bat. Следующем шагом введите знерщт pip install -r requirements.txt
 # Введите cd mytube и python manage.py runserver
-# Осталось открыть в проводнике C:\myube\myube\utils\nginx-1.26.3\nginx-1.26.3 и запустить nginx.exe
+# Осталось открыть в проводнике C:\myube\myube\utils\nginx-1.26.3\nginx-1.26.3, создайте папку temp, а внутри файл client_body_temp и запустить nginx.exe
