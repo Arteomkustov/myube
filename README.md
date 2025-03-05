@@ -7,3 +7,4 @@
 # !!! Python должен быть версии 3.10. Перейдите в терминале в C:\myube\myube и введите python -m venv venv, затем venv\Scripts\activate.bat. Следующем шагом введите знерщт pip install -r requirements.txt
 # Введите cd mytube и python manage.py runserver
 # Осталось открыть в проводнике C:\myube\myube\utils\nginx-1.26.3\nginx-1.26.3, создайте папку temp, а внутри файл client_body_temp и запустить nginx.exe
+# Сайт доступен по адресу 127.0.0.1 url админки /admin пароль root и других пользователей user_password
