@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+    {% block header %}
+
+    <title>Видео</title>
+
+    <!-- JS (optional, для некоторых компонентов) -->
+    <style>
+        .card-text{
+            margin-left: -5%;
+        }
+        .item{
+            padding: 5%;
+        }
+
+        .cont{
+            border: 3px solid green;
+            width: 200px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        .cont2{
+            display: flex;
+            justify-content: center;
+        }
+        @media (1200px >= width) {
+            .n-mn {
+                display: none;
+            }
+        }
+        @media (1200px < width) {
+            .n-pl {
+                display: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+
+<!-- Статичная верхушка канала -->
+{% block content %}
+<div class="container">
+    <div class="d-flex bd-highlight mb-2 no-flex">
+        <div class="mr-auto p-2 bd-highlight" style="width:100%">
+            <iframe width="100%" height="300px"  src="{{ video.get_absolute_video_url }}" frameborder="0" allowfullscreen></iframe>
+            <h1>{{ video.title }}</h1>
+            <div style="display: flex;">
+                <p class="h6" style="padding: 5px;">Просмотров: {{ video.views }}</p>
+                <p class="h6" style="padding: 5px;">Лайков: {{ video.likes }}</p>
+                <p class="h6" style="padding: 5px;">Дизлайков: {{ video.dislikes }}</p>
+                <p class="h6" style="padding: 5px;">Создано: {{ video.created_at }}</p>
+            </div>
+
+    <p>Описание: {{ video.overview }}</p>
+
+        <div style="display: flex">
+            <a style="display: flex; color: black; text-decoration: none;" href="{{ video.channel.get_absolute_url }}">
+                <img src="{{ video.channel.small_image.url }}" style="padding: 3px; width: 35px; height: 35px; border-radius: 50%;">
+                <div>{{ video.channel.name }}</div>
+            </a>
+
+        {% if user.is_authenticated %}
+            {% if subscribers %}
+                <form method="post" action="{% url 'unsubscribe' video.channel.id %}">
+                    {% csrf_token %}
+                    <button style="margin: 0 5px;" class="btn btn-outline-secondary" type="submit">Отписаться</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'subscribe' video.channel.id %}">
+                    {% csrf_token %}
+                    <button style="margin: 0 5px;" class="btn btn-danger" type="submit">Подписаться</button>
+                </form>
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-primary" type="submit" name="like" value="1">Like</button>
+                <button class="btn btn-primary" type="submit" name="dislike" value="-1">Dislike</button>
+            </form>
+        </div>
+        <h2>Добавить коментарий</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group" style="max-width: 600px;">
+                <label for="exampleFormControlTextarea1">{{ comment_form.text.label }}</label>
+                <textarea class="form-control" name="text" cols="5" rows="5" required="" id="id_text"></textarea>
+            </div>
+            <button class="btn btn-success" type="submit">Добавить</button>
+        </form>
+    {% else %}
+        </div>
+    {% endif %}
+
+    <h2>Коментарии</h2>
+    <ul>
+        {% for comment in comments %}
+            <li>{{ comment.user.username }}: {{ comment.text }}</li>
+        {% endfor %}
+    </ul>
+
+
+        </div>
+        <div class="p-2 bd-highlight" style="max-width: 100px;">
+            <div class="row n-mn">
+		        {% for i in recomendation %}
+                <div class="col-sm" style="display: flex;justify-content: center; margin: 10px 0;">
+                    <a href="{{ i.get_absolute_url }}" style="color: black; text-decoration: none;">
+                        <div class="card" style="max-width: 20rem; min-width: 14rem; border: 2px solid #524d4d8c;">
+                        <img src="{{ i.banner.url }}" class="card-img-top" alt="" style="height: 10rem; width: 100%">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ i.title }}</h5>
+                                <div class="card-text"><img src="{{ i.channel.small_image.url }}" style="padding: 3px; width: 35px; height: 35px; border-radius: 50%;">{{ i.channel.name }}<div class="item">Просмотров: {{ i.views }}</div></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+		    {% endfor %}
+            </div>
+        </div>
+        </div>
+                    <div class="row n-pl">
+		        {% for i in recomendation %}
+                <div class="col-sm" style="display: flex;justify-content: center; margin: 10px 0;">
+                    <a href="{{ i.get_absolute_url }}" style="color: black; text-decoration: none;">
+                        <div class="card" style="max-width: 20rem; min-width: 14rem; border: 2px solid #524d4d8c;">
+                        <img src="{{ i.banner.url }}" class="card-img-top" alt="" style="height: 10rem; width: 100%">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ i.title }}</h5>
+                                <div class="card-text"><img src="{{ i.channel.small_image.url }}" style="padding: 3px; width: 35px; height: 35px; border-radius: 50%;">{{ i.channel.name }}<div class="item">Просмотров: {{ i.views }}</div></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+		    {% endfor %}
+            </div>
+
+</div>
+{% endblock %}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ video.title }}</title>
+</head>
+<body>
+    <h1>{{ video.title }}</h1>
+    <p>Views: {{ video.views }}</p>
+    <p>Likes: {{ video.likes }}</p>
+    <p>Dislikes: {{ video.dislikes }}</p>
+    <p>Description: {{ video.overview }}</p>
+    <p>Created at: {{ video.created_at }}
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="like" value="1">Like</button>
+        <button type="submit" name="dislike" value="-1">Dislike</button>
+    </form>
+
+    <h2>Comments</h2>
+    <ul>
+        {% for comment in comments %}
+            <li>{{ comment.user.username }}: {{ comment.text }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add a Comment</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Add Comment</button>
+    </form>
+{{ recomendation }}
+</body>
+</html>

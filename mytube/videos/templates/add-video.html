@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSS -->
+    <style>
+        .cont {
+            margin:20px 10%;
+        }
+        @media (min-width: 1000px) {
+            .cont {
+                margin:20px 20%;
+            }
+        }
+        @media (400px >= width) {
+            .cont {
+                margin:0;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="card cont">
+  <div class="card-body">
+      <div id="confirmationMessage" style="display:none;">
+          <p>Форма успешно отправлена!</p>
+      </div>
+<form action="" method="post" enctype="multipart/form-data" id="myForm">
+    {% csrf_token %}
+        {% load widget_tweaks %}
+
+    <div class="container">
+
+
+        {% for field in form %}
+        <div class="mb-3">
+            {% if field == form.banner or field == form.video_file %}
+        <div class="custom-file">
+
+            <label class="custom-file-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+            {% if field == form.banner %}
+            <input type="file" class="custom-file-input" name="banner" accept="image/*" required="" id="id_banner">
+            {% else %}
+            {{ field }}
+            {% endif %}
+            {% if field.errors %}
+                <div class="text-danger">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+        </div>
+            {% else %}
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {% render_field field class="form-control" %}
+            {% if field.errors %}
+                <div class="text-danger">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    {% endfor %}
+        <div style="  display: flex;
+  justify-content: center;">
+            <button type="submit" width="100%" class="btn btn-primary btn-lg btn-block">Создать</button>
+        </div>
+
+    </div>
+
+</form>
+  </div>
+</div>
+<script>
+    //document.getElementById('myForm').style.visibility = 'hidden';
+</script>
+    <script>
+        function crash_form() {
+            document.getElementById('myForm').style.visibility = 'hidden';
+            document.getElementById('confirmationMessage').style.display = 'block';
+        }
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+</body>
+</html>

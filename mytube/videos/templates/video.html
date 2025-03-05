@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+    <script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
+    <style>
+        .vjs-quality-button {
+            display: inline-block;
+            cursor: pointer;
+            padding: 8px 12px;
+            margin-right: 5px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .vjs-quality-button:hover {
+            background-color: #e0e0e0;
+        }
+        @media (700px >= width) {
+            .my-video {
+                width: 400px;
+            }
+        }
+        @media (400px >= width) {
+            .my-video {
+                width: 300px;
+            }
+        }
+        @media (300px >= width) {
+            .my-video {
+                width: 200px;
+            }
+        }
+    </style>
+    <title>Video Quality Switcher</title>
+</head>
+<body>
+    <video id="my-video" class="video-js vjs-default-skin my-video" controls preload="auto" width="640" height="264" poster="{{ data.banner.url }}" data-setup='{}'>
+        <source src="{{ data.converted_video_file_720.url }}" type="video/mp4" label="720p" res="7200">
+        <track label="Russian" kind="subtitles" srclang="ru" src="{{ data.subtitles.url }}" default>
+    </video>
+
+    <script>
+        var player = videojs('my-video');
+
+        function createQualityButton(label, src) {
+            var button = document.createElement('button');
+            button.className = 'vjs-quality-button';
+            button.innerText = label;
+            button.onclick = function() {
+                changeVideoQuality(src);
+            };
+            return button;
+        }
+
+        function changeVideoQuality(src) {
+            var currentTime = player.currentTime();
+            var isPaused = player.paused();
+
+            player.src({ type: 'video/mp4', src: src });
+
+            player.ready(function() {
+                player.currentTime(currentTime);
+                if (!isPaused) {
+                    player.play();
+                }
+            });
+        }
+
+        player.on('ready', function() {
+            var controlBar = player.controlBar.el();
+            var subtitlesButton = controlBar.querySelector('.vjs-subs-caps-button');
+            var qualityButtonsContainer = document.createElement('div');
+            qualityButtonsContainer.className = 'vjs-quality-buttons';
+
+            qualityButtonsContainer.appendChild(createQualityButton('144p', '{{ data.converted_video_file_144.url }}'));
+            qualityButtonsContainer.appendChild(createQualityButton('360p', '{{ data.converted_video_file_380.url }}'));
+            qualityButtonsContainer.appendChild(createQualityButton('720p', '{{ data.converted_video_file_720.url }}'));
+
+            controlBar.insertBefore(qualityButtonsContainer, subtitlesButton.nextSibling);
+        });
+    </script>
+</body>
+</html>

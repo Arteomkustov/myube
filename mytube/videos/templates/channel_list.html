@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Channels</title>
+</head>
+<body>
+    <h1>My Channel</h1>
+    {% if user_channel %}
+        <h2>{{ user_channel.name }}</h2>
+        <img src="{{ user_channel.small_image.url }}" alt="{{ user_channel.name }}">
+        <img src="{{ user_channel.large_image.url }}" alt="{{ user_channel.name }}">
+    {% else %}
+        <a href="{% url 'create_channel' %}">Create Your Channel</a>
+    {% endif %}
+
+    <h1>Subscriptions</h1>
+    <ul>
+        {% for subscription in subscriptions %}
+            <li>
+                <h2>{{ subscription.channel.name }}</h2>
+                <img src="{{ subscription.channel.small_image.url }}" alt="{{ subscription.channel.name }}">
+                <img src="{{ subscription.channel.large_image.url }}" alt="{{ subscription.channel.name }}">
+                <form method="post" action="{% url 'unsubscribe' subscription.channel.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Unsubscribe</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h1>All Channels</h1>
+    <ul>
+        {% for channel in all_channels %}
+            <li>
+                <h2>{{ channel.name }}</h2>
+                <img src="{{ channel.small_image.url }}" alt="{{ channel.name }}">
+                <img src="{{ channel.large_image.url }}" alt="{{ channel.name }}">
+                <form method="post" action="{% url 'subscribe' channel.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Subscribe</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for i in rec %}
+<div>{{i.title }}</div>
+<div>{{i.overview }}</div>
+<div><a href="{{i.get_absolute_url }}">url</a> </div>
+<div><img style="" src="{{i.banner.url }}"></div>
+{% endfor %}
+{{ rec }}
+</body>
+</html>

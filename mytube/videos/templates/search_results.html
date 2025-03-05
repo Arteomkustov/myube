@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+    {% block header %}
+
+    <title>Главная</title>
+
+    <style>
+
+    </style>
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+
+    <h1>Результаты поиска для "{{ query }}"</h1>
+
+    <h2>Каналы</h2>
+    {% for channel in channels %}
+<img src="{{ channel.small_image.url }}"  style="padding: 3px; width: 35px; height: 35px; border-radius: 50%;" alt="">
+        <a href="{{ channel.get_absolute_url }}" style="color: black; text-decoration: none;">
+            {{ channel.name }}
+            <p>{{ channel.overview }}</p>
+        </a>
+    {% empty %}
+        Каналы не найдены.
+    {% endfor %}
+
+    <h2>Видео</h2>
+    <div style="justify-content: center;">
+        {% for i in videos %}
+            <div>
+                <div class="col-sm" style="display: flex;justify-content: center; margin: 10px 0;">
+                    <a href="{{ i.get_absolute_url }}" style="color: black; text-decoration: none;max-width: 40rem; width: 100%">
+                        <div  style="max-width: 40rem; min-width: 14rem; border: 2px solid #524d4d8c; display: flex; border-radius: 20px;">
+                        <img src="{{ i.banner.url }}" class="card-img-top" alt="" style="height: 10rem; width: 50%; border-radius: 20px;">
+                            <div class="card-body">
+                                <h5 class="card-title" height="80px">{{ i.title }}</h5>
+                                <div class="card-text"><img src="{{ i.channel.small_image.url }}" style="padding: 3px; width: 35px; height: 35px; border-radius: 50%;">{{ i.channel.name }}<div class="item">Просмотров: {{ i.views }}</div></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <a href="{{ video.get_absolute_url }}">{{ video.title }}</a>
+                <p>{{ video.overview }}</p>
+            </div>
+        {% empty %}
+            <div>Видео не найдены.</div>
+        {% endfor %}
+    </div>
+{% endblock %}

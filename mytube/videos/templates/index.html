@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+    {% block header %}
+
+    <title>Главная</title>
+
+    <!-- JS (optional, для некоторых компонентов) -->
+    <style>
+        .card-text{
+            margin-left: -5%;
+        }
+        .item{
+            padding: 5%;
+        }
+
+        .cont{
+            border: 3px solid green;
+            width: 200px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        .cont2{
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+{% endblock %}
+
+
+<!-- Статичная верхушка канала -->
+{% block content %}
+<div class="container">
+	<div class="row">
+		{% for i in rec %}
+		<div class="col-sm" style="display: flex;justify-content: center; margin: 10px 0;">
+			<a href="{{ i.get_absolute_url }}" style="color: black; text-decoration: none;">
+				<div class="card" style="max-width: 20rem; min-width: 14rem; border: 2px solid #524d4d8c;">
+				<img src="{{ i.banner.url }}" class="card-img-top" alt="" style="height: 10rem; width: 100%">
+					<div class="card-body">
+						<h5 class="card-title" style="height: 60px; font-size: 15px">{{ i.title }}</h5>
+						<div class="card-text"><img src="{{ i.channel.small_image.url }}" style="padding: 3px; width: 35px; height: 35px; border-radius: 50%;">{{ i.channel.name }}<div class="item">Просмотров: {{ i.views }}</div></div>
+					</div>
+				</div>
+			</a>
+		</div>
+		{% endfor %}
+  </div>
+</div>
+{% endblock %}

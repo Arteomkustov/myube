@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+    {% block header %}
+
+    <title>Главная канала</title>
+
+
+    <style>
+        .card-text{
+            margin-left: -5%;
+        }
+        .item{
+            padding: 5%;
+        }
+
+        .cont{
+            border: 3px solid green;
+            width: 200px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        .cont2{
+            display: flex;
+            justify-content: center;
+        }
+                .iframe-popup {
+            display: none; /* По умолчанию скрыто */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        /* Стили для кнопки закрытия */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        /* Затемнение фона */
+        .overlay {
+            display: none; /* По умолчанию скрыто */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 500;
+        }
+        .video_item {
+        background-color: red;
+        padding: 5px;
+        margin: 10px;
+        display:flex;
+        }
+        .item {
+        padding: 5px;
+        color: #000000;
+        text-decoration: none;
+        }
+        .my_container {
+        display: flex;
+        }
+        .my_item {
+        padding: 10px
+        }
+    </style>
+{% endblock %}
+
+
+<!-- Статичная верхушка канала -->
+{% block content %}
+<div class="container">
+    <img class="img-fluid" id="image" src="{{ channel.large_image.url }}" style="--element-width: calc(100% - 60px); width: var(--element-width); height: 300px;border-radius:100px; margin: 30px;" alt="{{ channel.name }}">
+
+    <script>
+        function setElementHeight() {
+            var element = document.getElementById('image');
+            var width = element.clientWidth; // Получаем ширину элемента
+            element.style.height = `calc(${width}px / 5)`; // Устанавливаем высоту
+        }
+
+        window.addEventListener('resize', setElementHeight);
+        window.addEventListener('load', setElementHeight);
+    </script>
+    <div class="my_container">
+            <div class="my_item"><img class="rounded-circle" style="object-fit: cover; width: 100px; height: 100px" src="{{ channel.small_image.url }}" alt="{{ channel.name }}"></div>
+            <div>
+                <p class="font-weight-bold">{{ channel.name }}</p>
+                <div class="my_item" class="text-left">{{ channel.overview }}</div>
+                <p>Подписчиков: {{ subscribers_count }}</p>
+                <div class="meny-container">
+                    {% if user.is_authenticated %}
+                    {% if subscribe %}
+                        <form method="post" action="{% url 'unsubscribe' channel.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-secondary" type="submit">Отписаться</button>
+                        </form>
+                    {% else %}
+                    <form method="post" action="{% url 'subscribe' channel.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-danger" type="submit">Подписаться</button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+	<div class="row">
+		{% for i in videos %}
+		<div class="col-sm" style="display: flex;justify-content: center; margin: 10px 0;">
+			<a href="{{ i.get_absolute_url }}" style="color: black; text-decoration: none;">
+				<div class="card" style="max-width: 20rem; min-width: 14rem; border: 2px solid #524d4d8c;">
+				<img src="{{ i.banner.url }}" class="card-img-top" alt="" style="height: 10rem; width: 100%">
+					<div class="card-body">
+						<h5 class="card-title" style="height: 60px; font-size: 15px">{{ i.title }}</h5>
+						<div class="card-text"><img src="{{ i.channel.small_image.url }}" style="padding: 3px; width: 35px; height: 35px; border-radius: 50%;">{{ i.channel.name }}<div class="item">Просмотров: {{ i.views }}</div></div>
+					</div>
+				</div>
+			</a>
+		</div>
+		{% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ object.name }}</title>
+</head>
+<body>
+<div>name: {{ object.name }}</div>
+<div>overview: {{ object.overview }}</div>
+<img style="border-radius:100%; width: 50px; height:50px;" src="/media/{{ object.small_image }}" />
+<div height="100" style=" "><img style="width: 100%; height:300px;border-radius:100px; object-fit: cover; " src="/media/{{ object.small_image }}"  alt="normal" /></div>
+
+
+

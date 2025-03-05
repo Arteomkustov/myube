@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+    {% block header %}
+
+    <title>Мой канал</title>
+
+    <!-- JS (optional, для некоторых компонентов) -->
+    <style>
+        /* Стили для блока с iframe */
+        .iframe-popup {
+            display: none; /* По умолчанию скрыто */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        /* Стили для кнопки закрытия */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        /* Затемнение фона */
+        .overlay {
+            display: none; /* По умолчанию скрыто */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 500;
+        }
+        .video_item {
+        background-color: red;
+        padding: 5px;
+        margin: 10px;
+        display:flex;
+        }
+        .item {
+        padding: 5px;
+        color: #000000;
+        text-decoration: none;
+        }
+        .my_container {
+        display: flex;
+        }
+        .my_item {
+        padding: 10px
+        }
+    </style>
+{% endblock %}
+
+
+<!-- Статичная верхушка канала -->
+{% block content %}
+    <img class="img-fluid" id="image" src="{{ channel.large_image.url }}" style="--element-width: calc(100% - 60px); width: var(--element-width); height: 300px;border-radius:100px; margin: 30px;" alt="{{ channel.name }}">
+
+    <script>
+        function setElementHeight() {
+            var element = document.getElementById('image');
+            var width = element.clientWidth; // Получаем ширину элемента
+            element.style.height = `calc(${width}px / 5)`; // Устанавливаем высоту
+        }
+
+        window.addEventListener('resize', setElementHeight);
+        window.addEventListener('load', setElementHeight);
+    </script>
+
+    <div class="container">
+        <div class="my_container">
+            <div class="my_item"><img class="rounded-circle" style="object-fit: cover; width: 100px; height: 100px" src="{{ channel.small_image.url }}" alt="{{ channel.name }}"></div>
+            <div>
+                <p class="font-weight-bold">{{ channel.name }}</p>
+                <div class="my_item" class="text-left">{{ channel.overview }}</div>
+                <p>Подписчиков: {{ subscribers_count }}</p>
+                <div class="meny-container">
+                    <!-- Открытие добавить видео -->
+                    <button type="button" class="btn btn-primary" onclick="showIframePopup()">Редактировать</button>
+                    <div class="overlay" id="overlay"></div>
+
+                    <div class="iframe-popup" id="iframePopup">
+                        <button class="close-btn" onclick="hideIframePopup()">Закрыть</button>
+                        <iframe src="{% url 'updateoverview' %}" width="100%" height="100%" frameborder="0"></iframe>
+                    </div>
+
+                    <script>
+                        // Функция для показа iframe
+                        function showIframePopup() {
+                            document.getElementById('iframePopup').style.display = 'block';
+                            document.getElementById('overlay').style.display = 'block';
+                        }
+
+                        // Функция для скрытия iframe
+                        function hideIframePopup() {
+                            document.getElementById('iframePopup').style.display = 'none';
+                            document.getElementById('overlay').style.display = 'none';
+                        }
+                    </script>
+                    <!-- Конец добавить видео -->
+                                        <!-- Открытие добавить видео -->
+                    <button type="button" class="btn btn-danger" onclick="addvideo_showIframePopup()">Добавить видео</button>
+                    <div class="overlay" id="addvideo_overlay"></div>
+
+                    <div class="iframe-popup" id="addvideo_iframePopup">
+                        <button class="close-btn" onclick="addvideo_hideIframePopup()">Закрыть</button>
+                        <iframe src="{% url 'addvideo' %}" width="100%" height="100%" frameborder="0"></iframe>
+                    </div>
+
+                    <script>
+                        // Функция для показа iframe
+                        function addvideo_showIframePopup() {
+                            document.getElementById('addvideo_iframePopup').style.display = 'block';
+                            document.getElementById('addvideo_overlay').style.display = 'block';
+                        }
+
+                        // Функция для скрытия iframe
+                        function addvideo_hideIframePopup() {
+                            document.getElementById('addvideo_iframePopup').style.display = 'none';
+                            document.getElementById('addvideo_overlay').style.display = 'none';
+                        }
+                    </script>
+                    <!-- Конец добавить видео -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+<!-- Блок видео -->
+    <div class="card" style="margin: 5%;">
+        <table class="table table-striped table-responsive">
+            <thead class="thead-dark">
+                <tr>
+                <th scope="col" width="30%">Название</th>
+                <th scope="col" width="7%">Просмотры</th>
+                <th scope="col" width="7%">Лайки</th>
+                <th scope="col" width="7%">Дизлайки</th>
+                <th scope="col" width="7%">Просмотреть</th>
+                <th scope="col" width="7%">Редактировать</th>
+                <th scope="col" width="7%">Удалить</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video in videos %}
+                    {% if video.ready %}
+                        <tr>
+                            <th scope="row">{{ video.title }}</th>
+                            <td style="text-align: center;">{{ video.views }}</td>
+                            <td style="text-align: center;">{{ video.likes }}</td>
+                            <td style="text-align: center;">{{ video.dislikes }}</td>
+                            <td><a class="item" href="{{ video.get_absolute_url }}">Посмотреть</a></td>
+                            <td>
+                                <button type="button" class="btn btn-primary" onclick="showIframePopup{{ video.id }}()">Редактировать</button>
+                                <div class="overlay" id="overlay{{ video.id }}"></div>
+
+                                <div class="iframe-popup" id="iframePopup{{ video.id }}">
+                                <button class="close-btn" onclick="hideIframePopup{{ video.id }}()">Закрыть</button>
+                                <iframe src="{% url 'updatevideo' slug=video.slug %}" width="100%" height="100%" frameborder="0"></iframe>
+                            </div>
+
+                            <script>
+                                // Функция для показа iframe
+                                function showIframePopup{{ video.id }}() {
+                                    document.getElementById('iframePopup{{ video.id }}').style.display = 'block';
+                                    document.getElementById('overlay{{ video.id }}').style.display = 'block';
+                                }
+
+                                // Функция для скрытия iframe
+                                function hideIframePopup{{ video.id }}() {
+                                    document.getElementById('iframePopup{{ video.id }}').style.display = 'none';
+                                    document.getElementById('overlay{{ video.id }}').style.display = 'none';
+                                }
+                            </script>
+                            </td>
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="video_id" value="{{ video.id }}">
+                                    <button type="submit"  class="btn btn-danger">Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7">Видео обрабатывается</td>
+                        </tr>
+                    {% endif %}
+
+                {% endfor %}
+            <!--<div class="video_item">
+                <div class="item">Название {{ video.title }}</div>
+                <div class="item">Просмотры {{ video.views }}</div>
+                <div class="item">Лайки {{ video.likes }}</div>
+                <div class="item">Дизлайки {{ video.dislikes }}</div>
+                <a class="item" href="{{ video.get_absolute_url }}">Посмотреть</a>
+                            <a class="item" href="{{ video.get_edit_url }}">Редактировать</a>
+                     <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="video_id" value="{{ video.id }}">
+                        <button type="submit">Delete</button>
+                    </form>
+            </div>
+    {{ else %}
+    <div>Видео обрабатывается</div>
+    {{ endif %}
+    -->
+
+      </tbody>
+        </table>
+    </div>
+
+<!-- Конец Блока видео -->
+
+
+{% endblock %}
+
+</body>
+</html>
